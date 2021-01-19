@@ -1,0 +1,96 @@
+<div class="contain">
+  <div class="header-search">
+    <mat-form-field appearance="outline">
+      <mat-label>Search on videos</mat-label>
+      <input
+        matInput
+        placeholder="Placeholder"
+        (keydown)="applyFilter($event)"
+      />
+      <mat-icon matSuffix>search</mat-icon>
+      <mat-hint>Hint</mat-hint>
+    </mat-form-field>
+  </div>
+  <mat-spinner *ngIf="isLoading"></mat-spinner>
+  <table
+    mat-table
+    [dataSource]="videosDataSource"
+    matSort
+    #sort="matSort"
+    *ngIf="!isLoading"
+    class="data-table"
+    class="mat-elevation-z8"
+  >
+    <ng-container matColumnDef="id">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Index</th>
+      <td mat-cell *matCellDef="let i = index">{{ i + 1 }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="name">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Name</th>
+      <td mat-cell *matCellDef="let element">{{ element.snippet.title }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="date">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Date</th>
+      <td mat-cell *matCellDef="let element">
+        {{ element.snippet.publishTime | date }}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="thumbnail">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Thumbnail</th>
+      <td mat-cell *matCellDef="let element">
+        <img src="{{ element.snippet.thumbnails.default.url }}" alt="" />
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="rate">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Rating</th>
+      <td mat-cell *matCellDef="let element">
+        <rating
+          [max]="5"
+          [(ngModel)]="currentRate"
+          [customTemplate]="tt"
+          (click)="addRate(element.id.videoId)"
+        ></rating>
+
+        <ng-template #tt let-i="index" let-v="value">
+          <button class="btn btn-{{ i < v ? 'warning' : 'default' }}">
+            {{ i < v ? "&#9733;" : "&#9734;" }}
+          </button>
+        </ng-template>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Actions</th>
+      <td mat-cell *matCellDef="let element">
+        <button
+          class="action-btn"
+          mat-icon-button
+          [routerLink]="['/video-details', element.id.videoId]"
+        >
+          <mat-icon>visibility</mat-icon>
+        </button>
+        <button
+          class="action-btn"
+          mat-icon-button
+          (click)="addToFavorite(element)"
+        >
+          <mat-icon>favorite</mat-icon>
+        </button>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+  </table>
+  <mat-paginator
+    *ngIf="!isLoading"
+    [pageSize]="pageSize"
+    [pageSizeOptions]="[1, 3, 7, 10]"
+    [length]="totalResults"
+    (page)="onChangedPage($event)"
+  >
+  </mat-paginator>
+</div>

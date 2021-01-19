@@ -1,0 +1,28 @@
+<div class="contain">
+  <mat-spinner *ngIf="isLoading"></mat-spinner>
+  <div class="item" *ngFor="let item of VideoData">
+    <div class="image-container">
+      <img src="{{ item.snippet.thumbnails.high.url }}" alt="" />
+    </div>
+    <div class="body">
+      <div class="main-info">
+        <h1 class="title">{{ item.snippet.title }}</h1>
+        <h4 class="description">{{ item.snippet.description }}</h4>
+      </div>
+
+      <div>
+        <p *ngIf="isCheckedAsFavorite">
+          <mat-icon>favorite</mat-icon> This video is in favorite list
+        </p>
+      </div>
+      <div class="other-info">
+        <p id="channel-title">
+          <strong>Channel Title</strong>: {{ item.snippet.channelTitle }}
+        </p>
+        <p id="date">
+          <strong>Upload Date</strong>:{{ item.snippet.publishedAt | date }}
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
